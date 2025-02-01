@@ -1,1 +1,1 @@
-# Nodejs+Typescript setup for mongodb 
+# Nodejs+Typescript setup with different database
