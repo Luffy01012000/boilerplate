@@ -1,3 +1,10 @@
+export type Env = 'development' | 'test' | 'production'
+
+export type JwtCreateType = {
+    data: unknown
+    expires?: string
+}
+
 export type THttpResponse = {
     success: boolean
     statusCode: number

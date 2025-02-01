@@ -1,4 +1,6 @@
-const { exec } = require('child_process')
+const { exec } = require('node:child_process')
+const { error } = require('node:console')
+const { stdout } = require('node:process')
 
 // Command Line Arguments
 const command = process.argv[2]
@@ -14,7 +16,7 @@ if (!validCommands.includes(command)) {
 const commandsWithoutMigrationNameRequired = ['list', 'prune']
 if (!commandsWithoutMigrationNameRequired.includes(command)) {
     if (!migrationName) {
-        console.error('Migration name is required')
+        console.error(`Migration name is required`)
         process.exit(0)
     }
 }
@@ -43,12 +45,7 @@ function runNpmScript() {
     })
 }
 
-// Example usage:
 runNpmScript()
-    .then((output) => {
-        console.info(output)
-    })
-    .catch((error) => {
-        console.error('Error:', error)
-    })
+    .then((output) => console.info(output))
+    .catch((error) => console.error(error))
 

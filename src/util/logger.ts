@@ -1,13 +1,11 @@
 import util from 'util'
-import 'winston-mongodb'
 import { createLogger, format, transports } from 'winston'
 import { ConsoleTransportInstance, FileTransportInstance } from 'winston/lib/winston/transports'
-import config from '../config/config'
+import config from '@config/config'
 import { EApplicationEnvironment } from '../constant/application'
 import path from 'path'
 import { red, blue, yellow, green, magenta } from 'colorette'
 import * as sourceMapSupport from 'source-map-support'
-import { MongoDBTransportInstance } from 'winston-mongodb'
 
 // Linking Trace Support
 sourceMapSupport.install()
@@ -26,15 +24,14 @@ const colorizeLevel = (level: string) => {
 }
 
 const consoleLogFormat = format.printf((info) => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+     
     const { level, message, timestamp, meta = {} } = info
-
     const customLevel = colorizeLevel(level.toUpperCase())
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+     
     const customTimestamp = green(timestamp as string)
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const customMessage = message
+     
+    const customMessage = message as string
 
     const customMeta = util.inspect(meta, {
         showHidden: false,
@@ -61,12 +58,12 @@ const consoleTransport = (): Array<ConsoleTransportInstance> => {
 }
 
 const fileLogFormat = format.printf((info) => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+     
     const { level, message, timestamp, meta = {} } = info
 
     const logMeta: Record<string, unknown> = {}
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+     
     for (const [key, value] of Object.entries(meta)) {
         if (value instanceof Error) {
             logMeta[key] = {
@@ -81,9 +78,9 @@ const fileLogFormat = format.printf((info) => {
 
     const logData = {
         level: level.toUpperCase(),
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+         
         message,
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+         
         timestamp,
         meta: logMeta
     }
@@ -101,24 +98,10 @@ const FileTransport = (): Array<FileTransportInstance> => {
     ]
 }
 
-const MongodbTransport = (): Array<MongoDBTransportInstance> => {
-    return [
-        new transports.MongoDB({
-            level: 'info',
-            db: config.DATABASE_URL as string,
-            metaKey: 'meta',
-            expireAfterSeconds: 3600 * 24 * 30,
-            options: {
-                useUnifiedTopology: true
-            },
-            collection: 'application-logs'
-        })
-    ]
-}
-
 export default createLogger({
     defaultMeta: {
         meta: {}
     },
-    transports: [...FileTransport(), ...MongodbTransport(), ...consoleTransport()]
+    transports: [...FileTransport(), ...consoleTransport()]
 })
+

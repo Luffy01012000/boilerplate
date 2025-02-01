@@ -6,15 +6,23 @@ import responseMessage from './constant/responseMessage'
 import httpError from './util/httpError'
 import helmet from 'helmet'
 import cors from 'cors'
-
+import config from '@app/config/config'
 const app: Application = express()
 
+let ORIGIN: string | string[]
+const isDevelopment = config.ENV === 'development'
+
+if (isDevelopment) {
+    ORIGIN = '*'
+} else if (!isDevelopment) {
+    ORIGIN = process.env.CORS_ORIGIN!.split(',')
+}
 // Middleware
 app.use(helmet())
 app.use(
     cors({
         methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'HEAD'],
-        origin: ['https://client.com'],
+        origin: ORIGIN!,
         credentials: true
     })
 )
